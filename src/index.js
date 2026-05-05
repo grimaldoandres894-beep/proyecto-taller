@@ -9,10 +9,10 @@ import { pool } from "./db.js";
 
 const app = express();
 
-// PORT para Render
+// 🔥 PORT para Render
 const PORT = process.env.PORT || 3000;
 
-// __dirname fix
+// __dirname fix (ES Modules)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // =====================
-// FRONT (opcional)
+// FRONTEND (opcional)
 // =====================
 app.use(express.static(path.join(__dirname, "../public")));
 
@@ -34,12 +34,12 @@ app.get("/", (req, res) => {
 });
 
 // =====================
-// API ROUTES
+// RUTAS API
 // =====================
 app.use("/api", usersRoutes);
 
 // =====================
-// TEST DB (CLAVE PARA PROBAR)
+// TEST BASE DE DATOS
 // =====================
 app.get("/db-test", async (req, res) => {
   try {
@@ -49,9 +49,9 @@ app.get("/db-test", async (req, res) => {
       time: result.rows[0]
     });
   } catch (error) {
-    console.error(error);
+    console.error("❌ DB Error:", error.message);
     res.status(500).json({
-      message: "❌ Error conectando a la DB",
+      message: "❌ Error conectando a la base de datos",
       error: error.message
     });
   }
@@ -71,5 +71,5 @@ app.use((err, req, res, next) => {
 // START SERVER (RENDER FIX)
 // =====================
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
 });
