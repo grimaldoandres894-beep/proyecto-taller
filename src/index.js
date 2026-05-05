@@ -5,13 +5,14 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import usersRoutes from "./routes/users.routes.js";
+import { pool } from "./db.js";
 
 const app = express();
 
-// 🔥 PORT para Render
+// PORT para Render
 const PORT = process.env.PORT || 3000;
 
-// 🔥 __dirname fix en ES Modules
+// __dirname fix
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -24,21 +25,37 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // =====================
-// ARCHIVOS ESTÁTICOS
+// FRONT (opcional)
 // =====================
 app.use(express.static(path.join(__dirname, "../public")));
 
-// =====================
-// RUTA PRINCIPAL
-// =====================
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
 // =====================
-// RUTAS API
+// API ROUTES
 // =====================
 app.use("/api", usersRoutes);
+
+// =====================
+// TEST DB (CLAVE PARA PROBAR)
+// =====================
+app.get("/db-test", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT NOW()");
+    res.json({
+      message: "✅ DB conectada correctamente",
+      time: result.rows[0]
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "❌ Error conectando a la DB",
+      error: error.message
+    });
+  }
+});
 
 // =====================
 // ERROR HANDLER
@@ -51,8 +68,8 @@ app.use((err, req, res, next) => {
 });
 
 // =====================
-// SERVIDOR (RENDER FIX)
+// START SERVER (RENDER FIX)
 // =====================
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
