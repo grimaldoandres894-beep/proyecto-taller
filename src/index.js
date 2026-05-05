@@ -8,39 +8,51 @@ import usersRoutes from "./routes/users.routes.js";
 
 const app = express();
 
-// 🔥 IMPORTANTE PARA RENDER
+// 🔥 PORT para Render
 const PORT = process.env.PORT || 3000;
 
-
+// 🔥 __dirname fix en ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// middlewares
+// =====================
+// MIDDLEWARES
+// =====================
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-
+// =====================
+// ARCHIVOS ESTÁTICOS
+// =====================
 app.use(express.static(path.join(__dirname, "../public")));
 
-
+// =====================
+// RUTA PRINCIPAL
+// =====================
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
+// =====================
+// RUTAS API
+// =====================
+app.use("/api", usersRoutes);
 
-app.use(usersRoutes);
-
-
+// =====================
+// ERROR HANDLER
+// =====================
 app.use((err, req, res, next) => {
-  console.error("❌ Error:", err.message);
+  console.error("❌ Error:", err);
   res.status(500).json({
     message: "Error en el servidor"
   });
 });
 
-// 🚀 iniciar servidor
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor en http://localhost:${PORT}`);
+// =====================
+// SERVIDOR (RENDER FIX)
+// =====================
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
 });
