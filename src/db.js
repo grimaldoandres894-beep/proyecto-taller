@@ -1,15 +1,10 @@
-import pkg from "pg";
-const { Pool } = pkg;
+import pg from "pg";
+
+const { Pool } = pg;
 
 export const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  password: "1234", // 🔴 CAMBIA ESTO por tu contraseña real
-  database: "nodepg",
-  port: 5432
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
-
-// 🔥 prueba de conexión
-pool.query("SELECT NOW()")
-  .then(() => console.log("✅ Conectado a PostgreSQL"))
-  .catch(err => console.error("❌ Error de conexión:", err));
